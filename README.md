@@ -2,11 +2,11 @@ i. Training regression models capable of predicting variables such as `awake tim
 ii. Providing explanations for the models' predictions by relying on: the models' intrinsic properties, an explainability tool i.e. SHAP, and traditional sensitivity analysis techniques. 
 # sleepFactors
 
-sleepFactors explores how daily behavior, environment, and stress signals relate to sleep quality. The project is built around a multitarget regression notebook that compares several models, then uses explainability and sensitivity analysis to understand why the predictions move.
+sleepFactors explores how daily behavior, environment, and stress signals relate to sleep quality. The project is built around a multitarget regression that compares several models, then uses explainability and sensitivity analysis to understand why the predictions move.
 
 ## What this project covers
 
-- Predicting five sleep outcomes from day-level lifestyle and environment features
+- Predicting five sleep outcomes from daily lifestyle and environment features
 - Comparing classical machine learning models with a neural tabular model
 - Explaining predictions with SHAP, feature importance views, and dependence plots
 - Stress-testing the learned relationships with perturbation-based sensitivity analysis
@@ -86,13 +86,7 @@ These values come from fitted surrogate lines inside the notebook and should be 
 - `sleep_raw.xlsx` - source dataset used in the notebook
 - `assets/flow_chart.svg` - workflow figure
 
-## Running the analysis
-
-1. Create and activate a Python environment for the notebook.
-2. Install the main packages used in the analysis: pandas, numpy, scikit-learn, xgboost, torch, pytorch-tabnet, shap, seaborn, statsmodels, openpyxl, and ipywidgets.
-3. Open `notebook (2).ipynb` and run the cells in order.
-
-## Notes
+## Important Notes
 
 - This project is best read as an explainable modeling study rather than a causal sleep science claim.
 - Some sensitivity steps intentionally simplify the problem by perturbing one feature at a time and not modeling every feature interaction.
