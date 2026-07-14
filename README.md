@@ -1,62 +1,98 @@
-# Multivariate Regression and Explainable AI with SHAP
-
-### 1. Features:  
-#### Day & lifestyle context
-`day` — Day of the week or day index in the dataset  
-`with partner` — Whether you spent the day/evening with a partner  
-`alc` — Alcohol consumed today (amount or yes/no)  
-`last alc` — Time of last alcohol intake  
-`last meal` — Time of last meal before sleep  
-`last caffeine` — Time of last caffeine intake  
-`caffeine sum` — Total caffeine consumed today  
-
-#### Stress
-##### Anticipated stress
-`anticipated social stress`: Expected social‑related stress for the upcoming day  
-`anticipated work stress`: Expected work‑related stress for the upcoming day  
-
-#### Environment & habits
-`at home?`: Whether you slept at home (vs. elsewhere)  
-`looking the sun each morning`: Whether you viewed morning sunlight (morning light exposure)  
-
-#### Sleep environment
-`last night bedtime temp`: Bedroom temperature at bedtime  
-`wake up temp`: Bedroom temperature at wake‑up  
-`last night bedtime humidity`: Bedroom humidity at bedtime  
-`wake up humidity`: Bedroom humidity at wake‑up  
-`avg sleeptime temp`: Average bedroom temperature during sleep  
-`avg sleeptime humidity`: Average bedroom humidity during sleep   
-
-#### Activity metrics
-`Minutes Very Active`: Minutes spent in high‑intensity physical activity  
-`Active Time on Computer`: Total time spent actively using a computer  
-
-#### Emotional metric
-`guilt‑pride`: A self‑reported score capturing where you fall on the guilt - pride spectrum for the day (often used in behavioral datasets)  
-
-#### Target variables
-`Awake Time (new)`: total minutes spent awake during the sleep period, excluding the initial time it takes to fall asleep. This includes all wake episodes after sleep onset.   
-`REM Sleep Time (new)`: total minutes spent in `Rapid Eye Movement (REM)` sleep. REM is associated with dreaming, emotional regulation, and memory consolidation.    
-`Sleep Latency (new)`: the amount of time (in minutes) it takes to fall asleep after going to bed.  
-`Number of Awakenings (new)`: the count of distinct wake episodes during the sleep period after initially falling asleep.  
-
-
-### 2. Goals
-This project focused on:  
 i. Training regression models capable of predicting variables such as `awake time`, `rem sleep time`, `deep sleep time`, `sleep latency`, and `number of awakenings`. The models include: **Support Vector Machines (SVM)**, **XGboost**, and **TabNet Regressor**.     
 ii. Providing explanations for the models' predictions by relying on: the models' intrinsic properties, an explainability tool i.e. SHAP, and traditional sensitivity analysis techniques. 
+# sleepFactors
 
-### 3. Observations
-1. I found that using default model hyperparameters, the SVM regressor outperforms the XGBoost model on the basis of their Coefficients of Determination (r2_score). However, the TabNet model outperforms the SVM regressor. Subsequent analyses focused on understanding the TabNet models to find the most influential factors.
+sleepFactors explores how daily behavior, environment, and stress signals relate to sleep quality. The project is built around a multitarget regression notebook that compares several models, then uses explainability and sensitivity analysis to understand why the predictions move.
 
-2. While many features have the potential to influence the models, `alc` stood out as one of the most influential in all the cases as it consistently appeared in the top three most important features based on the average `SHAP` values. Note that explanations provided by feature importance only gives a sense of the magnitude of a feature's contributions and does not provide clues as to the direction. For instance, `alc`, `last alc`, and `caffeine sum` are the most influential factors of `rem sleep time`, however, they are negatively correlated to `rem sleep time`. In order to provide better insights into the magnitude and direction of feature impacts, I made visualizations such as the Beeswarm plots (variable importance plot), and the partial dependence plots.
+## What this project covers
 
-3. Lastly, I carried out sensitivity analysis to further investigate how the target variables repond to changes in the features. I explored two techniques: **One-at-a-time (OAP) sensistivity analysis** and **Scaling sensitivity analysis**. I found linear and non-linear relationships between some of the features and the target variables. For instance, the results show that a unit change in `alc` corresponds to a change in `awake time` by a factor of `5.2698` but a change in `rem sleep time` by a factor of `-6.8141`. More details can be found in the attached jupyter notebook. There were simplifying assumptions made regarding the features in the sensisitivity analysis. For instance, the effect of feature interactions was not accounted when perturbing one feature at a time. Execrcise some caution when drawing conclusions based on the results.
+- Predicting five sleep outcomes from day-level lifestyle and environment features
+- Comparing classical machine learning models with a neural tabular model
+- Explaining predictions with SHAP, feature importance views, and dependence plots
+- Stress-testing the learned relationships with perturbation-based sensitivity analysis
 
-Note: The important relationships between our features and target show correlations but not causation. For all we know, there could be other confounding variables (besides the features considered in this project) responsible for the changes in the target variables. Hence, further experimentation and statistical tests are required inorder to make any conclusive claims.
+## Targets predicted
 
-## The flow chart of the entire process:
+- Awake Time
+- REM Sleep Time
+- Deep Sleep Time
+- Sleep Latency
+- Number of Awakenings
 
-Please download the notebook to view if it is unable to render here.
+## Predictor groups
+
+The notebook combines 20 input variables across several categories:
+
+- Lifestyle: alcohol intake, time of last alcohol intake, last meal, last caffeine, caffeine total
+- Stress: anticipated social stress and anticipated work stress
+- Environment: bedtime and wake-up temperature, bedtime and wake-up humidity, average sleep-time temperature and humidity
+- Daily context: whether you were at home, with a partner, or got morning sunlight
+- Activity and mood: minutes very active, computer time, and a guilt-pride score
+
+## Workflow
+
+1. Load the dataset from `sleep_raw.xlsx`.
+2. Split the data into training and test sets.
+3. Standardize the input features.
+4. Train one model per target using linear-kernel SVR, XGBoost, and TabNet.
+5. Compare model quality with RMSE and `R^2`.
+6. Use SHAP and feature importance plots to inspect the strongest model family.
+7. Run one-at-a-time and scaling sensitivity analysis to see how predictions respond when inputs are perturbed.
+
+## Model comparison
+
+| Target | SVR R2 | XGBoost R2 | TabNet R2 |
+| --- | ---: | ---: | ---: |
+| Awake time | 0.552 | 0.402 | 0.570 |
+| REM sleep time | 0.542 | 0.464 | 0.572 |
+| Deep sleep time | 0.545 | 0.472 | 0.600 |
+| Sleep latency | 0.527 | 0.473 | 0.525 |
+| Number of awakenings | 0.576 | 0.506 | 0.597 |
+
+TabNet achieved the strongest score on four of the five targets. The linear SVR was slightly better on sleep latency, while default XGBoost trailed both alternatives across all targets in this notebook.
+
+## Main findings
+
+- `alc` showed up among the top three features across all five TabNet models.
+- `last alc` repeatedly surfaced as a high-impact feature for four targets.
+- `avg sleeptime temp`, `caffeine sum`, and `guilt-pride` also appeared often in the SHAP-based explanations.
+- The directional SHAP views suggested that higher alcohol-related values were associated with more awake time and more awakenings, but lower REM and deep sleep estimates.
+- The notebook goes beyond static rankings by checking both feature importance and the direction of each feature's contribution.
+
+## Sensitivity analysis highlights
+
+The notebook includes two perturbation-based checks:
+
+- One-at-a-time analysis, where a single feature is varied across its observed values while the others stay fixed
+- Scaling analysis, where each feature distribution is widened by 1.5 times its standard deviation
+
+One concrete example from the one-at-a-time analysis is the modeled effect of `alc`:
+
+- `awake time (new)`: +5.27
+- `rem sleep time (new)`: -6.81
+- `deep sleep time (new)`: -5.93
+- `sleep latency (new)`: +1.40
+- `number of awakenings (new)`: +1.95
+
+These values come from fitted surrogate lines inside the notebook and should be interpreted as model-based associations, not causal effects.
+
+## Visual overview
 
 ![flow chart of the analysis](./assets/flow_chart.svg)
+
+## Repository contents
+
+- `notebook (2).ipynb` - end-to-end analysis notebook
+- `sleep_raw.xlsx` - source dataset used in the notebook
+- `assets/flow_chart.svg` - workflow figure
+
+## Running the analysis
+
+1. Create and activate a Python environment for the notebook.
+2. Install the main packages used in the analysis: pandas, numpy, scikit-learn, xgboost, torch, pytorch-tabnet, shap, seaborn, statsmodels, openpyxl, and ipywidgets.
+3. Open `notebook (2).ipynb` and run the cells in order.
+
+## Notes
+
+- This project is best read as an explainable modeling study rather than a causal sleep science claim.
+- Some sensitivity steps intentionally simplify the problem by perturbing one feature at a time and not modeling every feature interaction.
