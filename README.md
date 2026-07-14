@@ -69,6 +69,24 @@ To complement the per-target SHAP plots, the notebook also combines mean absolut
 
 ![Aggregated SHAP effects across the five sleep targets](./assets/aggregated_effects_SHAPley.png)
 
+## Exploring the direction of the contributions
+
+The notebook does not stop at ranking features by magnitude. It also uses SHAP beeswarm plots to show direction: points on the right increase the model output, points on the left decrease it, and the color scale shows whether high or low feature values are responsible.
+
+Because there are five targets, a grid works better here than placing each plot separately.
+
+![Directional SHAP contribution plots across the five sleep targets](./assets/shap-direction-grid.png)
+
+### Observations from the directional SHAP plots
+
+- **REM sleep time:** higher `last alc`, `anticipated social stress`, and `anticipated work stress` tend to push the prediction downward. Higher `Minutes Very Active` tends to push it upward.
+- **Awake time:** higher `alc`, `caffeine sum`, and `last alc` tend to increase predicted awake time, while `looking the sun each morning`, `day`, and `Minutes Very Active` generally pull it down.
+- **Deep sleep time:** higher `last alc`, `alc`, `caffeine sum`, `guilt-pride`, and `avg sleeptime temp` tend to reduce predicted deep sleep time.
+- **Number of awakenings:** `alc`, `last alc`, `caffeine sum`, and `avg sleeptime temp` tend to raise the predicted number of awakenings.
+- **Sleep latency:** higher `caffeine sum`, `last alc`, `last night bedtime temp`, and `guilt-pride` tend to increase predicted sleep latency.
+
+These are model-based associations from the fitted TabNet explanations, so they are useful for interpretation but should not be read as causal claims.
+
 ## Sensitivity analysis highlights
 
 The notebook includes two perturbation-based checks:
@@ -96,6 +114,7 @@ These values come from fitted surrogate lines inside the notebook and should be 
 - `sleep_raw.xlsx` - source dataset used in the notebook
 - `assets/flow_chart.svg` - workflow figure
 - `assets/aggregated_effects_SHAPley.png` - aggregated SHAP heatmap across the five targets
+- `assets/shap-direction-grid.png` - directional SHAP beeswarm grid across the five targets
 
 ## Important Notes
 
