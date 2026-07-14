@@ -1,5 +1,3 @@
-i. Training regression models capable of predicting variables such as `awake time`, `rem sleep time`, `deep sleep time`, `sleep latency`, and `number of awakenings`. The models include: **Support Vector Machines (SVM)**, **XGboost**, and **TabNet Regressor**.     
-ii. Providing explanations for the models' predictions by relying on: the models' intrinsic properties, an explainability tool i.e. SHAP, and traditional sensitivity analysis techniques. 
 # sleepFactors
 
 sleepFactors explores how daily behavior, environment, and stress signals relate to sleep quality. The project is built around a multitarget regression that compares several models, then uses explainability and sensitivity analysis to understand why the predictions move.
@@ -56,8 +54,20 @@ TabNet achieved the strongest score on four of the five targets. The linear SVR 
 - `alc` showed up among the top three features across all five TabNet models.
 - `last alc` repeatedly surfaced as a high-impact feature for four targets.
 - `avg sleeptime temp`, `caffeine sum`, and `guilt-pride` also appeared often in the SHAP-based explanations.
+- The aggregated SHAP heatmap makes the cross-target pattern clearer: `alc`, `last alc`, `guilt-pride`, `avg sleeptime temp`, and `caffeine sum` are the most recurring high-impact drivers across the five sleep outcomes.
 - The directional SHAP views suggested that higher alcohol-related values were associated with more awake time and more awakenings, but lower REM and deep sleep estimates.
 - The notebook goes beyond static rankings by checking both feature importance and the direction of each feature's contribution.
+
+## Aggregated SHAP view
+
+To complement the per-target SHAP plots, the notebook also combines mean absolute SHAP values into one heatmap across all five targets. This makes it easier to see which variables keep resurfacing instead of reading each target in isolation.
+
+- `last alc` is especially strong for REM sleep time and remains important for deep sleep and awake time.
+- `alc` and `caffeine sum` are consistent cross-target drivers, particularly for awake, REM, and deep sleep outcomes.
+- `avg sleeptime temp` stands out most clearly for deep sleep time.
+- Sleep latency has lower absolute SHAP magnitudes overall, which suggests a weaker or more diffuse feature signal than the other targets.
+
+![Aggregated SHAP effects across the five sleep targets](./assets/aggregated_effects_SHAPley.png)
 
 ## Sensitivity analysis highlights
 
@@ -85,6 +95,7 @@ These values come from fitted surrogate lines inside the notebook and should be 
 - `notebook (2).ipynb` - end-to-end analysis notebook
 - `sleep_raw.xlsx` - source dataset used in the notebook
 - `assets/flow_chart.svg` - workflow figure
+- `assets/aggregated_effects_SHAPley.png` - aggregated SHAP heatmap across the five targets
 
 ## Important Notes
 
