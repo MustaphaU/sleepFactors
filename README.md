@@ -87,6 +87,24 @@ Because there are five targets, a grid works better here than placing each plot 
 
 These are model-based associations from the fitted TabNet explanations, so they are useful for interpretation but should not be read as causal claims.
 
+## Interaction effects from partial dependence plots
+
+The notebook also uses SHAP dependence plots to move from direction to interaction. In these plots, the x-axis shows the feature value, the y-axis shows its SHAP contribution, and the color scale shows the second feature that interacts most strongly with it for that target.
+
+The full notebook generates 25 panels across five recurring features. To keep the README readable, the grid below focuses on the three families with the clearest visual trends: `alc`, `last alc`, and `avg sleeptime temp`.
+
+![Partial dependence grid for the strongest recurring interaction patterns](./assets/partial-dependence-grid.png)
+
+### Observations from the partial dependence plots
+
+- `alc` shows a clear positive relationship with predicted awake time, sleep latency, and number of awakenings, while showing a negative relationship with predicted REM and deep sleep time.
+- `last alc` follows a very similar pattern, which suggests that both alcohol amount and timing matter in the model's sleep predictions.
+- `avg sleeptime temp` has one of the strongest monotonic patterns in the notebook: higher values are associated with more awake time, longer latency, and more awakenings, but lower REM and deep sleep predictions.
+- The interaction coloring repeatedly points to temperature and activity-related variables as modifiers of these effects, rather than treating each feature as fully independent.
+- In the awake-time panel for `alc`, the relationship becomes stronger when `last night bedtime temp` is high, which is one of the clearest interaction examples in the notebook.
+
+The notebook also includes additional dependence plots for `caffeine sum` and `guilt-pride`, but the README focuses on the panels with the cleanest visible trends.
+
 ## Sensitivity analysis highlights
 
 The notebook includes two perturbation-based checks:
@@ -115,6 +133,7 @@ These values come from fitted surrogate lines inside the notebook and should be 
 - `assets/flow_chart.svg` - workflow figure
 - `assets/aggregated_effects_SHAPley.png` - aggregated SHAP heatmap across the five targets
 - `assets/shap-direction-grid.png` - directional SHAP beeswarm grid across the five targets
+- `assets/partial-dependence-grid.png` - focused partial dependence grid for the clearest interaction patterns
 
 ## Important Notes
 
